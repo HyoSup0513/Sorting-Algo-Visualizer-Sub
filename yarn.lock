@@ -1531,6 +1531,11 @@ brorand@^1.0.1:
   resolved "https://registry.yarnpkg.com/brorand/-/brorand-1.1.0.tgz#12c25efe40a45e3c323eb8675a0a0ce57b22371f"
   integrity sha1-EsJe/kCkXjwyPrhnWgoM5XsiNx8=
 
+browser-beep@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/browser-beep/-/browser-beep-1.0.2.tgz#591cc3609d660bf97441919255a01fbadf0809cb"
+  integrity sha512-TjC7CEluvNwhePDGocblO7kKQBw+wcR54PBjO9uVO0K0jUXKuDLg+4KJupDkaX62xT7gc5suC521QKFwq8Qzvw==
+
 browserify-aes@^1.0.0, browserify-aes@^1.0.4:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/browserify-aes/-/browserify-aes-1.2.0.tgz#326734642f403dabc3003209853bb70ad428ef48"
@@ -4687,6 +4692,11 @@ repeat-string@^1.6.1:
   resolved "https://registry.yarnpkg.com/repeat-string/-/repeat-string-1.6.1.tgz#8dcae470e1c88abc2d600fff4a776286da75e637"
   integrity sha1-jcrkcOHIirwtYA//Sndihtp15jc=
 
+request-animation-frame-polyfill@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/request-animation-frame-polyfill/-/request-animation-frame-polyfill-1.0.1.tgz#2e2f2bfd405360f18aaa7280ea3fce1afbd1d32d"
+  integrity sha512-99VifU4QuPpQaVjRq6M8Mhg6U2lpwDE1w/D20qOHE7lsOgnWWfzWLlaC86ztY+KyCaOHjw6fEfnzs+DLveTLdQ==
+
 resolve-from@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/resolve-from/-/resolve-from-3.0.0.tgz#b22c7af7d9d6881bc8b6e653335eebcb0a188748"
@@ -5334,6 +5344,13 @@ tty-browserify@0.0.0:
   version "0.0.0"
   resolved "https://registry.yarnpkg.com/tty-browserify/-/tty-browserify-0.0.0.tgz#a157ba402da24e9bf957f9aa69d524eed42901a6"
   integrity sha1-oVe6QC2iTpv5V/mqadUk7tQpAaY=
+
+tweening-js@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/tweening-js/-/tweening-js-2.1.0.tgz#418a907e5ef72b32359499f6d6ba3dbeb47e6798"
+  integrity sha512-oLf5zQZIUVX0ZCFxqp4fp4lGJwqQcB/ARBm4t7/aRBPR7evNo5y6wAxxAE2qxrclzgSzGG2sXeTf2j8ThmiFwQ==
+  dependencies:
+    request-animation-frame-polyfill "^1.0.1"
 
 type-fest@^0.7.1:
   version "0.7.1"
