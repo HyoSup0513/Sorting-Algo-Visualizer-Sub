@@ -5,12 +5,12 @@ export default function Home() {
   return (
     <div className="container">
       <Head>
-        <title>Sorting Algorithm Visualization</title>
+        <title>SortVisualizer</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
       <div className="board">
-        <h1 className="title">Sorting Algorithm Visualization </h1>
+        <h1 className="title">Sorting Algorithm Visualizer </h1>
         {/* <p></p> */}
         <InsertionSort />
       </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import { range, shuffle, uniqueId, delay, size } from "lodash";
+import { range, shuffle, uniqueId } from "lodash";
 import {
   useState,
   FC,
@@ -25,8 +25,7 @@ import {
 import IconShuffle from "@material-ui/icons/Shuffle";
 import IconSort from "@material-ui/icons/Sort";
 import getColorMap from "colormap";
-import { setFlagsFromString } from "v8";
-import insertionSort from "../../pages/SortingAlgorithm/insertionSort";
+import { Slider } from "@material-ui/core";
 
 const colorMapNameArr = [
   "jet",
@@ -92,7 +91,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const SIZE = 40;
-const DURATION = 200;
+const DURATION = 100;
 const BAR_WIDTH = 20;
 const BAR_MARGIN = 2;
 type Tsetidx = Dispatch<SetStateAction<number>>;
@@ -107,6 +106,7 @@ interface IExtendedBar {
   value: number;
   refsetX: MutableRefObject<TsetX>;
 }
+
 const swap = (arr: IExtendedBar[], a: number, b: number) => {
   const tmp = arr[a];
   arr[a] = arr[b];
@@ -165,7 +165,7 @@ const InsertionSort = async (
     await delaySet(j, i, setidxJ);
     j = i;
     while (j > 0 && extendedBarArr[j - 1].value > extendedBarArr[j].value) {
-      beepA(1);
+      //beepA(1);
       await Promise.all([
         delaySet(getX(j), getX(j - 1), extendedBarArr[j].refsetX.current),
         delaySet(getX(j - 1), getX(j), extendedBarArr[j - 1].refsetX.current),
@@ -175,93 +175,11 @@ const InsertionSort = async (
       await delaySet(j, j - 1, setidxJ);
       j = j - 1;
     }
-    beepB(1);
+    //beepB(1);
     await delaySet(i, i + 1, setidxI);
     i = i + 1;
   }
 };
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-// const swap2 = async (arr: number[], a: number, b: number) => {
-//   await sleep(100);
-//   const tmp = arr[a];
-//   arr[a] = arr[b];
-//   arr[b] = tmp;
-// };
-
-// const partition = (arr: number[], left: number, right: number) => {
-//   let x = arr[right];
-//   let i = left - 1;
-
-//   for (let j = left; j <= right - 1; j++) {
-//     if (arr[j] <= x) {
-//       i++;
-//       swap2(arr, i, j);
-//     }
-//   }
-//   swap2(arr, i + 1, right);
-//   return i + 1;
-// };
-
-// const quickSort = (arr: number[], left: number, right: number) => {
-//   if (left < right) {
-//     /* Partitioning index */
-//     let p = partition(arr, left, right);
-//     quickSort(arr, left, p - 1);
-//     quickSort(arr, p + 1, right);
-//   }
-// };
-
-// const delay = (
-//   arr: number[],
-//   setarr2: (value: SetStateAction<number[]>) => void
-// ) => {
-//   return new Promise((resolve) => {
-//     setarr2([...arr]);
-//     setTimeout(resolve, 100);
-//   });
-// };
-
-// const partition = async (
-//   arr: number[],
-//   left: number,
-//   right: number,
-//   setarr: (value: SetStateAction<number[]>) => void
-// ) => {
-//   let x = arr[right];
-//   let i = left - 1;
-
-//   let j = left;
-
-//   while (j < right) {
-//     if (arr[j] <= x) {
-//       i++;
-//       delay(arr, setarr);
-//       await swap2(arr, i, j);
-//     }
-//     j++;
-//   }
-//   delay(arr, setarr);
-//   await swap2(arr, i + 1, right);
-//   return i + 1;
-// };
-
-// const quickSort = async (
-//   arr: number[],
-//   left: number,
-//   right: number,
-//   setarr: (value: SetStateAction<number[]>) => void
-// ) => {
-//   if (left < right) {
-//     /* Partitioning index */
-//     let p = await partition(arr, left, right, setarr);
-//     quickSort(arr, left, p - 1, setarr);
-//     quickSort(arr, p + 1, right, setarr);
-//   }
-// };
 
 const partition = async (
   extendedBarArr: IExtendedBar[],
@@ -274,12 +192,15 @@ const partition = async (
   let x = extendedBarArr[right];
   let i = left - 1;
 
+  const beepA = Beep({ frequency: 750 });
+  const beepB = Beep({ frequency: 280 });
+
   let j = left;
   while (j <= right - 1) {
     if (extendedBarArr[j].value <= x.value) {
       i++;
       await delaySet(i, i + 1, setidxI);
-
+      //beepA(1);
       await Promise.all([
         delaySet(getX(i), getX(j), extendedBarArr[i].refsetX.current),
         delaySet(getX(j), getX(i), extendedBarArr[j].refsetX.current),
@@ -287,6 +208,7 @@ const partition = async (
       swap(extendedBarArr, i, j);
     }
     j++;
+    //beepB(1);
     await delaySet(j, j + 1, setidxJ);
   }
   await Promise.all([
@@ -312,6 +234,97 @@ const quickSort = async (
   }
 };
 
+const delay = (
+  arr: number[],
+  setarr: (value: SetStateAction<number[]>) => void
+) => {
+  return new Promise((resolve) => {
+    setarr([...arr]);
+    setTimeout(resolve, 100);
+  });
+};
+
+const mergeSort = async (
+  arr: number[],
+  setarr: (value: SetStateAction<number[]>) => void,
+  setidxI: Tsetidx,
+  setidxJ: Tsetidx
+) => {
+  //Create two arrays for sorting
+  let sorted = Array.from(arr);
+  let n = sorted.length;
+  let buffer = new Array(n);
+
+  for (let size = 1; size < n; size *= 2) {
+    for (let leftStart = 0; leftStart < n; leftStart += 2 * size) {
+      //Get the two sub arrays
+      let left = leftStart,
+        right = Math.min(left + size, n),
+        leftLimit = right,
+        rightLimit = Math.min(right + size, n);
+      //Merge the sub arrays
+      await merge(
+        left,
+        right,
+        leftLimit,
+        rightLimit,
+        sorted,
+        buffer,
+        setarr,
+        setidxI,
+        setidxJ
+      );
+    }
+
+    //Swap the sorted sub array and merge them
+    let temp = sorted;
+    sorted = buffer;
+    buffer = temp;
+  }
+  arr = sorted;
+  return arr;
+};
+
+const merge = async (
+  left: number,
+  right: number,
+  leftLimit: number,
+  rightLimit: number,
+  sorted: number[],
+  buffer: number[],
+  setarr: (value: SetStateAction<number[]>) => void,
+  setidxI: Tsetidx,
+  setidxJ: Tsetidx
+) => {
+  let i = left;
+  //Compare the two sub arrays and merge them in the sorted order
+  await delay(buffer, setarr);
+  while (left < leftLimit && right < rightLimit) {
+    await delay(buffer, setarr);
+    if (sorted[left] <= sorted[right]) {
+      await delaySet(i, left, setidxI);
+      buffer[i++] = sorted[left++];
+    } else {
+      await delaySet(i, right, setidxJ);
+      buffer[i++] = sorted[right++];
+    }
+  }
+
+  //If there are elements in the left sub arrray then add it to the result
+  while (left < leftLimit) {
+    await delay(buffer, setarr);
+    await delaySet(i, left, setidxI);
+    buffer[i++] = sorted[left++];
+  }
+
+  //If there are elements in the right sub array then add it to the result
+  while (right < rightLimit) {
+    await delay(buffer, setarr);
+    await delaySet(i, right, setidxJ);
+    buffer[i++] = sorted[right++];
+  }
+};
+
 interface IpropsBoard {
   arr: number[];
   refExtendedBarArr: MutableRefObject<IExtendedBar[]>;
@@ -321,6 +334,7 @@ const isArrEqual = (oldProps: IpropsBoard, props: IpropsBoard) => {
   return oldProps.arr === props.arr;
 };
 
+let count = 0;
 const Board: FC<IpropsBoard> = (props) => {
   const { arr, refExtendedBarArr } = props;
   const extendedBarArr = arr.map((value) => ({
@@ -332,8 +346,13 @@ const Board: FC<IpropsBoard> = (props) => {
     refExtendedBarArr.current = extendedBarArr;
   }, [arr]);
 
-  const colorMapIdx = Math.floor(Math.random() * colorMapNameArr.length);
+  let colorMapIdx = 15;
+  if (count === 0) {
+    colorMapIdx = Math.floor(Math.random() * colorMapNameArr.length);
+    count = 1;
+  }
   const colormap = colorMapNameArr[colorMapIdx];
+
   const colorArr = getColorMap({
     colormap,
     nshades: arr.length,
@@ -376,12 +395,12 @@ const Board: FC<IpropsBoard> = (props) => {
 const MemorizedBoard = memo(Board, isArrEqual);
 
 export default () => {
-  const [arr, setarr] = useState(initArr);
+  const [arr, setarr] = useState(getArr());
   const [idxI, setidxI] = useState(1);
   const [idxJ, setidxJ] = useState(1);
   const [isRunning, setisRunning] = useState(false);
   const refExtendedBarArr = useRef<IExtendedBar[]>([]);
-  useEffect(() => setarr(getArr()), []);
+  // useEffect(() => setarr(getArr()), []);
 
   const handleShuffle = () => {
     setarr(shuffle(getArr()));
@@ -401,31 +420,53 @@ export default () => {
     setisRunning(false);
   };
 
+  const handleSortTypeC = async () => {
+    setisRunning(true);
+    const defaultArr = [...arr];
+    setarr(await mergeSort(defaultArr, setarr, setidxI, setidxJ));
+    setisRunning(false);
+
+    // await mergeSort(refExtendedBarArr.current, setidxI, setidxJ);
+  };
+
   const classes = useStyles({});
 
   return (
     <div className="container">
       <Button
         variant="contained"
-        color="primary"
+        color="default"
         disabled={isRunning}
         className={classes.buttonSort}
         onClick={handleSortTypeA}
+        startIcon={<IconShuffle />}
       >
         Insertion Sort
       </Button>
 
       <Button
         variant="contained"
-        color="primary"
+        color="default"
         disabled={isRunning}
         className={classes.buttonSort}
         onClick={handleSortTypeB}
+        startIcon={<IconShuffle />}
       >
         Quick Sort
       </Button>
 
+      <Button
+        variant="contained"
+        color="default"
+        disabled={isRunning}
+        className={classes.buttonSort}
+        onClick={handleSortTypeC}
+        startIcon={<IconShuffle />}
+      >
+        Merge Sort
+      </Button>
       <MemorizedBoard arr={arr} refExtendedBarArr={refExtendedBarArr} />
+
       <div className="indexBox">
         <div
           className="index i"
@@ -454,7 +495,6 @@ export default () => {
             Suffle
           </Button>
         )}
-        {isRunning && <div className="running"></div>}
       </div>
 
       <style jsx>
