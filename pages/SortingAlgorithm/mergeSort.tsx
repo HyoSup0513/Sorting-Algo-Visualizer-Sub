@@ -1,5 +1,5 @@
 import React from "react";
-import { range, shuffle, uniqueId, delay, size } from "lodash";
+import { range, shuffle, uniqueId } from "lodash";
 import {
   useState,
   FC,
@@ -16,17 +16,11 @@ import { tween } from "tweening-js";
 import Beep from "browser-beep";
 // UI
 import Button from "@material-ui/core/Button";
-import {
-  createStyles,
-  makeStyles,
-  Theme,
-  jssPreset,
-} from "@material-ui/core/styles";
+import { createStyles, makeStyles, Theme } from "@material-ui/core/styles";
 import IconShuffle from "@material-ui/icons/Shuffle";
 import IconSort from "@material-ui/icons/Sort";
 import getColorMap from "colormap";
-import { setFlagsFromString } from "v8";
-import insertionSort from "../../pages/SortingAlgorithm/insertionSort";
+import Mainpage from "../index";
 
 const colorMapNameArr = [
   "jet",
@@ -92,7 +86,7 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const SIZE = 40;
-const DURATION = 200;
+const DURATION = 100;
 const BAR_WIDTH = 20;
 const BAR_MARGIN = 2;
 type Tsetidx = Dispatch<SetStateAction<number>>;
@@ -151,7 +145,7 @@ const delaySet = (initValue: number, value: number, set: Tsetany) => {
   return tween(initValue, value, set, DURATION).promise();
 };
 
-const InsertionSort = async (
+const sort = async (
   extendedBarArr: IExtendedBar[],
   setidxI: Tsetidx,
   setidxJ: Tsetidx
@@ -178,137 +172,6 @@ const InsertionSort = async (
     beepB(1);
     await delaySet(i, i + 1, setidxI);
     i = i + 1;
-  }
-};
-
-function sleep(ms) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-// const swap2 = async (arr: number[], a: number, b: number) => {
-//   await sleep(100);
-//   const tmp = arr[a];
-//   arr[a] = arr[b];
-//   arr[b] = tmp;
-// };
-
-// const partition = (arr: number[], left: number, right: number) => {
-//   let x = arr[right];
-//   let i = left - 1;
-
-//   for (let j = left; j <= right - 1; j++) {
-//     if (arr[j] <= x) {
-//       i++;
-//       swap2(arr, i, j);
-//     }
-//   }
-//   swap2(arr, i + 1, right);
-//   return i + 1;
-// };
-
-// const quickSort = (arr: number[], left: number, right: number) => {
-//   if (left < right) {
-//     /* Partitioning index */
-//     let p = partition(arr, left, right);
-//     quickSort(arr, left, p - 1);
-//     quickSort(arr, p + 1, right);
-//   }
-// };
-
-// const delay = (
-//   arr: number[],
-//   setarr2: (value: SetStateAction<number[]>) => void
-// ) => {
-//   return new Promise((resolve) => {
-//     setarr2([...arr]);
-//     setTimeout(resolve, 100);
-//   });
-// };
-
-// const partition = async (
-//   arr: number[],
-//   left: number,
-//   right: number,
-//   setarr: (value: SetStateAction<number[]>) => void
-// ) => {
-//   let x = arr[right];
-//   let i = left - 1;
-
-//   let j = left;
-
-//   while (j < right) {
-//     if (arr[j] <= x) {
-//       i++;
-//       delay(arr, setarr);
-//       await swap2(arr, i, j);
-//     }
-//     j++;
-//   }
-//   delay(arr, setarr);
-//   await swap2(arr, i + 1, right);
-//   return i + 1;
-// };
-
-// const quickSort = async (
-//   arr: number[],
-//   left: number,
-//   right: number,
-//   setarr: (value: SetStateAction<number[]>) => void
-// ) => {
-//   if (left < right) {
-//     /* Partitioning index */
-//     let p = await partition(arr, left, right, setarr);
-//     quickSort(arr, left, p - 1, setarr);
-//     quickSort(arr, p + 1, right, setarr);
-//   }
-// };
-
-const partition = async (
-  extendedBarArr: IExtendedBar[],
-  left: number,
-  right: number,
-  setidxI: Tsetidx,
-  setidxJ: Tsetidx
-) => {
-  // Pivot
-  let x = extendedBarArr[right];
-  let i = left - 1;
-
-  let j = left;
-  while (j <= right - 1) {
-    if (extendedBarArr[j].value <= x.value) {
-      i++;
-      await delaySet(i, i + 1, setidxI);
-
-      await Promise.all([
-        delaySet(getX(i), getX(j), extendedBarArr[i].refsetX.current),
-        delaySet(getX(j), getX(i), extendedBarArr[j].refsetX.current),
-      ]);
-      swap(extendedBarArr, i, j);
-    }
-    j++;
-    await delaySet(j, j + 1, setidxJ);
-  }
-  await Promise.all([
-    delaySet(getX(i + 1), getX(right), extendedBarArr[i + 1].refsetX.current),
-    delaySet(getX(right), getX(i + 1), extendedBarArr[right].refsetX.current),
-  ]);
-  swap(extendedBarArr, i + 1, right);
-  return i + 1;
-};
-
-const quickSort = async (
-  extendedBarArr: IExtendedBar[],
-  left: number,
-  right: number,
-  setidxI: Tsetidx,
-  setidxJ: Tsetidx
-) => {
-  if (left < right) {
-    /* Partitioning index */
-    const p = await partition(extendedBarArr, left, right, setidxI, setidxJ);
-    quickSort(extendedBarArr, left, p - 1, setidxI, setidxJ);
-    quickSort(extendedBarArr, p + 1, right, setidxI, setidxJ);
   }
 };
 
@@ -389,15 +252,9 @@ export default () => {
     setidxJ(1);
   };
 
-  const handleSortTypeA = async () => {
+  const handleSort = async () => {
     setisRunning(true);
-    await InsertionSort(refExtendedBarArr.current, setidxI, setidxJ);
-    setisRunning(false);
-  };
-
-  const handleSortTypeB = async () => {
-    setisRunning(true);
-    await quickSort(refExtendedBarArr.current, 0, 39, setidxI, setidxJ);
+    await sort(refExtendedBarArr.current, setidxI, setidxJ);
     setisRunning(false);
   };
 
@@ -405,58 +262,6 @@ export default () => {
 
   return (
     <div className="container">
-      <Button
-        variant="contained"
-        color="primary"
-        disabled={isRunning}
-        className={classes.buttonSort}
-        onClick={handleSortTypeA}
-      >
-        Insertion Sort
-      </Button>
-
-      <Button
-        variant="contained"
-        color="primary"
-        disabled={isRunning}
-        className={classes.buttonSort}
-        onClick={handleSortTypeB}
-      >
-        Quick Sort
-      </Button>
-
-      <MemorizedBoard arr={arr} refExtendedBarArr={refExtendedBarArr} />
-      <div className="indexBox">
-        <div
-          className="index i"
-          style={{ transform: `translateX(${getX(idxI)}px)` }}
-        >
-          &nbsp; i
-        </div>
-        <div
-          className="index j"
-          style={{ transform: `translateX(${getX(idxJ)}px)` }}
-        >
-          &nbsp; j
-        </div>
-      </div>
-
-      <div className="buttonBox">
-        {!isRunning && (
-          <Button
-            variant="contained"
-            color="primary"
-            disabled={isRunning}
-            className={classes.buttonSort}
-            startIcon={<IconShuffle />}
-            onClick={handleShuffle}
-          >
-            Suffle
-          </Button>
-        )}
-        {isRunning && <div className="running"></div>}
-      </div>
-
       <style jsx>
         {`
           .container {
