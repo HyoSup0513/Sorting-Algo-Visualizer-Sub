@@ -244,6 +244,7 @@ const delay = (
   });
 };
 
+// Merge Sort
 const mergeSort = async (
   arr: number[],
   setarr: (value: SetStateAction<number[]>) => void,
@@ -305,7 +306,7 @@ const merge = async (
       await delaySet(i, left, setidxI);
       buffer[i++] = sorted[left++];
     } else {
-      await delaySet(i, right, setidxJ);
+      await delaySet(i, right, setidxI);
       buffer[i++] = sorted[right++];
     }
   }
@@ -313,7 +314,7 @@ const merge = async (
   //If there are elements in the left sub arrray then add it to the result
   while (left < leftLimit) {
     await delay(buffer, setarr);
-    await delaySet(i, left, setidxI);
+    await delaySet(i, left, setidxJ);
     buffer[i++] = sorted[left++];
   }
 
@@ -322,6 +323,72 @@ const merge = async (
     await delay(buffer, setarr);
     await delaySet(i, right, setidxJ);
     buffer[i++] = sorted[right++];
+  }
+};
+
+// Heap Sort
+const heapSort = async (
+  extendedBarArr: IExtendedBar[],
+  n: number,
+  setidxI: Tsetidx,
+  setidxJ: Tsetidx
+) => {
+  // Build heap (rearrange array)
+  for (let i = n / 2 - 1; i >= 0; i--) {
+    await heapify(extendedBarArr, n, i, setidxI, setidxJ);
+
+    await delaySet(i, i - 1, setidxJ);
+  }
+
+  // One by one extract an element from heap
+  for (let i = n - 1; i > 0; i--) {
+    // Move current root to end
+    await Promise.all([
+      delaySet(getX(0), getX(i), extendedBarArr[0].refsetX.current),
+      delaySet(getX(i), getX(0), extendedBarArr[i].refsetX.current),
+    ]);
+    swap(extendedBarArr, 0, i);
+
+    await delaySet(0, i, setidxJ);
+
+    // call max heapify on the reduced heap
+    await heapify(extendedBarArr, i, 0, setidxI, setidxJ);
+  }
+};
+
+const heapify = async (
+  extendedBarArr: IExtendedBar[],
+  n: number,
+  i: number,
+  setidxI: Tsetidx,
+  setidxJ: Tsetidx
+) => {
+  let largest = i; // Initialize largest as root
+  let l = 2 * i + 1; // left = 2*i + 1
+  let r = 2 * i + 2; // right = 2*i + 2
+
+  // If left child is larger than root
+  if (l < n && extendedBarArr[l].value > extendedBarArr[largest].value) {
+    largest = l;
+  }
+
+  // If right child is larger than largest so far
+  if (r < n && extendedBarArr[r].value > extendedBarArr[largest].value) {
+    largest = r;
+  }
+
+  // If largest is not root
+  if (largest != i) {
+    await Promise.all([
+      delaySet(getX(i), getX(largest), extendedBarArr[i].refsetX.current),
+      delaySet(getX(largest), getX(i), extendedBarArr[largest].refsetX.current),
+    ]);
+    swap(extendedBarArr, i, largest);
+
+    await delaySet(i, largest, setidxI);
+
+    // Recursively heapify the affected sub-tree
+    await heapify(extendedBarArr, n, largest, setidxI, setidxJ);
   }
 };
 
@@ -399,6 +466,7 @@ export default () => {
   const [idxI, setidxI] = useState(1);
   const [idxJ, setidxJ] = useState(1);
   const [isRunning, setisRunning] = useState(false);
+  const [isRunningShu, setisRunningShu] = useState(false);
   const refExtendedBarArr = useRef<IExtendedBar[]>([]);
   // useEffect(() => setarr(getArr()), []);
 
@@ -406,27 +474,40 @@ export default () => {
     setarr(shuffle(getArr()));
     setidxI(1);
     setidxJ(1);
+    setisRunning(false);
+    setisRunningShu(false);
   };
 
   const handleSortTypeA = async () => {
     setisRunning(true);
+    setisRunningShu(true);
     await InsertionSort(refExtendedBarArr.current, setidxI, setidxJ);
-    setisRunning(false);
+    setisRunningShu(false);
   };
 
   const handleSortTypeB = async () => {
     setisRunning(true);
+    setisRunningShu(true);
     await quickSort(refExtendedBarArr.current, 0, 39, setidxI, setidxJ);
-    setisRunning(false);
+    setisRunningShu(false);
   };
 
   const handleSortTypeC = async () => {
     setisRunning(true);
+    setisRunningShu(true);
     const defaultArr = [...arr];
     setarr(await mergeSort(defaultArr, setarr, setidxI, setidxJ));
-    setisRunning(false);
+    setisRunningShu(false);
 
     // await mergeSort(refExtendedBarArr.current, setidxI, setidxJ);
+  };
+
+  const handleSortTypeD = async () => {
+    setisRunning(true);
+    setisRunningShu(true);
+
+    await heapSort(refExtendedBarArr.current, SIZE, setidxI, setidxJ);
+    setisRunningShu(false);
   };
 
   const classes = useStyles({});
@@ -439,7 +520,7 @@ export default () => {
         disabled={isRunning}
         className={classes.buttonSort}
         onClick={handleSortTypeA}
-        startIcon={<IconShuffle />}
+        startIcon={<IconSort />}
       >
         Insertion Sort
       </Button>
@@ -450,7 +531,7 @@ export default () => {
         disabled={isRunning}
         className={classes.buttonSort}
         onClick={handleSortTypeB}
-        startIcon={<IconShuffle />}
+        startIcon={<IconSort />}
       >
         Quick Sort
       </Button>
@@ -461,10 +542,22 @@ export default () => {
         disabled={isRunning}
         className={classes.buttonSort}
         onClick={handleSortTypeC}
-        startIcon={<IconShuffle />}
+        startIcon={<IconSort />}
       >
         Merge Sort
       </Button>
+
+      <Button
+        variant="contained"
+        color="default"
+        disabled={isRunning}
+        className={classes.buttonSort}
+        onClick={handleSortTypeD}
+        startIcon={<IconSort />}
+      >
+        Heap Sort
+      </Button>
+
       <MemorizedBoard arr={arr} refExtendedBarArr={refExtendedBarArr} />
 
       <div className="indexBox">
@@ -483,18 +576,18 @@ export default () => {
       </div>
 
       <div className="buttonBox">
-        {!isRunning && (
+        {
           <Button
             variant="contained"
-            color="primary"
-            disabled={isRunning}
+            color="secondary"
+            disabled={isRunningShu}
             className={classes.buttonSort}
             startIcon={<IconShuffle />}
             onClick={handleShuffle}
           >
             Suffle
           </Button>
-        )}
+        }
       </div>
 
       <style jsx>
