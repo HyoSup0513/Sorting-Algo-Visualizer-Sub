@@ -1,5 +1,5 @@
 import Head from "next/head";
-import InsertionSort from "../components/SortingAlgorithm/insertionSort";
+import SortingBoard from "../components/Views/sortingBoard";
 
 export default function Home() {
   return (
@@ -12,7 +12,7 @@ export default function Home() {
       <div className="board">
         <h1 className="title">Sorting Algorithm Visualizer </h1>
         {/* <p></p> */}
-        <InsertionSort />
+        <SortingBoard />
       </div>
 
       <style jsx>{`
