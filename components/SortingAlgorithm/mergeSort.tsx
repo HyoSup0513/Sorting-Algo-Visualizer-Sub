@@ -21,6 +21,8 @@ export const mergeSort = async (
         leftLimit = right,
         rightLimit = Math.min(right + size, n);
       //Merge the sub arrays
+      await delay(buffer, setarr);
+      await delaySet(leftStart, leftStart + 1, setidxJ);
       await merge(
         left,
         right,
@@ -32,6 +34,7 @@ export const mergeSort = async (
         setidxI,
         setidxJ
       );
+      await delay(buffer, setarr);
     }
 
     //Swap the sorted sub array and merge them
@@ -39,8 +42,8 @@ export const mergeSort = async (
     sorted = buffer;
     buffer = temp;
   }
-  arr = sorted;
-  return arr;
+
+  return sorted;
 };
 
 const merge = async (
@@ -55,30 +58,35 @@ const merge = async (
   setidxJ: Tsetidx
 ) => {
   let i = left;
+
   //Compare the two sub arrays and merge them in the sorted order
-  await delay(buffer, setarr);
   while (left < leftLimit && right < rightLimit) {
-    await delay(buffer, setarr);
     if (sorted[left] <= sorted[right]) {
-      await delaySet(i, left, setidxI);
+      await delay(buffer, setarr);
+      await delaySet(i, i + 1, setidxI);
       buffer[i++] = sorted[left++];
+      await delay(buffer, setarr);
     } else {
-      await delaySet(i, right, setidxI);
+      await delay(buffer, setarr);
+      await delaySet(i, i + 1, setidxI);
       buffer[i++] = sorted[right++];
+      await delay(buffer, setarr);
     }
   }
 
   //If there are elements in the left sub arrray then add it to the result
   while (left < leftLimit) {
     await delay(buffer, setarr);
-    await delaySet(i, left, setidxJ);
+    await delaySet(i, i + 1, setidxI);
     buffer[i++] = sorted[left++];
+    await delay(buffer, setarr);
   }
 
   //If there are elements in the right sub array then add it to the result
   while (right < rightLimit) {
     await delay(buffer, setarr);
-    await delaySet(i, right, setidxJ);
+    await delaySet(i, i + 1, setidxI);
     buffer[i++] = sorted[right++];
+    await delay(buffer, setarr);
   }
 };
