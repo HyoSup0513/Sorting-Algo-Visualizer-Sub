@@ -11,7 +11,8 @@ import Beep from "browser-beep";
 export const insertionSort = async (
   extendedBarArr: IExtendedBar[],
   setidxI: Tsetidx,
-  setidxJ: Tsetidx
+  setidxJ: Tsetidx,
+  allowedVolume: boolean
 ) => {
   const beepA = Beep({ frequency: 750 });
   const beepB = Beep({ frequency: 280 });
@@ -22,7 +23,9 @@ export const insertionSort = async (
     await delaySet(j, i, setidxJ);
     j = i;
     while (j > 0 && extendedBarArr[j - 1].value > extendedBarArr[j].value) {
-      //beepA(1);
+      if (allowedVolume) {
+        beepA(1);
+      }
       await Promise.all([
         delaySet(getX(j), getX(j - 1), extendedBarArr[j].refsetX.current),
         delaySet(getX(j - 1), getX(j), extendedBarArr[j - 1].refsetX.current),
@@ -32,7 +35,9 @@ export const insertionSort = async (
       await delaySet(j, j - 1, setidxJ);
       j = j - 1;
     }
-    //beepB(1);
+    if (allowedVolume) {
+      beepB(1);
+    }
     await delaySet(i, i + 1, setidxI);
     i = i + 1;
   }

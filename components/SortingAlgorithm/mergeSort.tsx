@@ -1,20 +1,33 @@
 import { Tsetidx, delay, delaySet } from "../Views/sortingBoard";
 import { SetStateAction } from "react";
+// Beep Sound
+import Beep from "browser-beep";
 
 // Merge Sort
 export const mergeSort = async (
   arr: number[],
   setarr: (value: SetStateAction<number[]>) => void,
   setidxI: Tsetidx,
-  setidxJ: Tsetidx
+  setidxJ: Tsetidx,
+  allowedVolume: boolean
 ) => {
+  const beepA = Beep({ frequency: 750 });
+  const beepB = Beep({ frequency: 280 });
+  const beepC = Beep({ frequency: 500 });
+
   //Create two arrays for sorting
   let sorted = Array.from(arr);
   let n = sorted.length;
   let buffer = new Array(n);
 
   for (let size = 1; size < n; size *= 2) {
+    if (allowedVolume) {
+      beepC(1);
+    }
     for (let leftStart = 0; leftStart < n; leftStart += 2 * size) {
+      if (allowedVolume) {
+        beepB(1);
+      }
       //Get the two sub arrays
       let left = leftStart,
         right = Math.min(left + size, n),
@@ -32,7 +45,8 @@ export const mergeSort = async (
         buffer,
         setarr,
         setidxI,
-        setidxJ
+        setidxJ,
+        allowedVolume
       );
       await delay(buffer, setarr);
     }
@@ -55,12 +69,18 @@ const merge = async (
   buffer: number[],
   setarr: (value: SetStateAction<number[]>) => void,
   setidxI: Tsetidx,
-  setidxJ: Tsetidx
+  setidxJ: Tsetidx,
+  allowedVolume: boolean
 ) => {
+  const beepA = Beep({ frequency: 700 });
+
   let i = left;
 
   //Compare the two sub arrays and merge them in the sorted order
   while (left < leftLimit && right < rightLimit) {
+    if (allowedVolume) {
+      beepA(1);
+    }
     if (sorted[left] <= sorted[right]) {
       await delay(buffer, setarr);
       await delaySet(i, i + 1, setidxI);
@@ -78,6 +98,9 @@ const merge = async (
   while (left < leftLimit) {
     await delay(buffer, setarr);
     await delaySet(i, i + 1, setidxI);
+    if (allowedVolume) {
+      beepA(1);
+    }
     buffer[i++] = sorted[left++];
     await delay(buffer, setarr);
   }
@@ -86,6 +109,9 @@ const merge = async (
   while (right < rightLimit) {
     await delay(buffer, setarr);
     await delaySet(i, i + 1, setidxI);
+    if (allowedVolume) {
+      beepA(1);
+    }
     buffer[i++] = sorted[right++];
     await delay(buffer, setarr);
   }

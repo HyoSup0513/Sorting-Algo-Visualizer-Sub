@@ -1,23 +1,5 @@
-import {
-  Tsetidx,
-  delaySet,
-  delay,
-  swap,
-  getX,
-  TsetX,
-  IExtendedBar,
-} from "../Views/sortingBoard";
-import {
-  useState,
-  FC,
-  SetStateAction,
-  Dispatch,
-  memo,
-  MutableRefObject,
-  useRef,
-  useEffect,
-} from "react";
-import { KeyObject } from "crypto";
+import { Tsetidx, delaySet, delay } from "../Views/sortingBoard";
+import Beep from "browser-beep";
 
 async function createGaps(a) {
   // if a is an array of 100, gaps would be [50, 25, 12, 6, 3, 1]
@@ -46,26 +28,42 @@ export const shellSort = async (
   a: number[],
   setidxI: Tsetidx,
   setidxJ: Tsetidx,
-  setarr
+  setarr,
+  allowedVolume: boolean
 ) => {
+  const beepA = Beep({ frequency: 750 });
+  const beepB = Beep({ frequency: 280 });
+  const beepC = Beep({ frequency: 580 });
+
   let gaps = await createGaps(a);
-  let len = gaps.length;
   let temp;
 
   for (let i = 0, j = gaps.length, gap; i < j; i += 1) {
+    await delaySet(i, i + 1, setidxJ);
+    if (allowedVolume) {
+      beepA(1);
+    }
     gap = gaps[i];
 
     for (let x = gap, y = a.length; x < y; x += 1) {
+      if (allowedVolume) {
+        beepB(1);
+      }
+      await delaySet(x, x + 1, setidxI);
       temp = a[x];
 
       // this performs insertion sort on subarrays
-      for (var z = x; z >= gap && a[z - gap] > temp; z -= gap) {
+      let z;
+      for (z = x; z >= gap && a[z - gap] > temp; z -= gap) {
+        if (allowedVolume) {
+          beepC(1);
+        }
         await delay(a, setarr);
-        await delaySet(z, z - 1, setidxJ);
+        await delaySet(z, z - gap, setidxJ);
         a[z] = a[z - gap];
       }
       await delay(a, setarr);
-      await delaySet(x, x + 1, setidxI);
+      // await delaySet(x, x + 1, setidxI);
       a[z] = temp;
     }
   }

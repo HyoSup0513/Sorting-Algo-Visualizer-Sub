@@ -27,6 +27,12 @@ import { heapSort } from "../SortingAlgorithm/heapSort";
 import { mergeSort } from "../SortingAlgorithm/mergeSort";
 import { insertionSort } from "../SortingAlgorithm/insertionSort";
 import { colorMapNameArr } from "./colorMapArr";
+import { shellSort } from "../SortingAlgorithm/shellSort";
+import { bubleSort } from "../SortingAlgorithm/bubleSort";
+import { selectionSort } from "../SortingAlgorithm/selectionSort";
+import VolSwitch from "./volumeSwitch";
+import { allowedVolume } from "./volumeSwitch";
+import AudiotrackIcon from "@material-ui/icons/Audiotrack";
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -43,6 +49,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
+let volume;
 export let SIZE = 70;
 const BAR_WIDTH = 20;
 const BAR_MARGIN = 2;
@@ -72,7 +79,7 @@ interface IPropsBar {
   colorArr: string[];
 }
 
-// Functional Component
+// Functional Bar Component
 const Bar: FC<IPropsBar> = (props) => {
   const { value, idx, refsetX, colorArr } = props;
   const [x, setX] = useState(getX(idx));
@@ -99,6 +106,7 @@ const Bar: FC<IPropsBar> = (props) => {
   );
 };
 
+// Function for delay
 export const delaySet = (initValue: number, value: number, set: Tsetany) => {
   return tween(initValue, value, set, DURATION).promise();
 };
@@ -122,6 +130,7 @@ const isArrEqual = (oldProps: IpropsBoard, props: IpropsBoard) => {
   return oldProps.arr === props.arr;
 };
 
+// Functional Board Component
 let count = 0;
 const Board: FC<IpropsBoard> = (props) => {
   const { arr, refExtendedBarArr } = props;
@@ -189,8 +198,8 @@ export default () => {
   const [isRunning, setisRunning] = useState(false);
   const [isRunningShu, setisRunningShu] = useState(false);
   const refExtendedBarArr = useRef<IExtendedBar[]>([]);
-  // useEffect(() => setarr(getArr()), []);
 
+  // Handle Shuffle Button
   const handleShuffle = () => {
     setarr(shuffle(getArr()));
     setidxI(1);
@@ -199,35 +208,77 @@ export default () => {
     setisRunningShu(false);
   };
 
+  // Handle insertionSort Button
   const handleSortTypeA = async () => {
     setisRunning(true);
     setisRunningShu(true);
-    await insertionSort(refExtendedBarArr.current, setidxI, setidxJ);
+    volume = allowedVolume;
+    await insertionSort(refExtendedBarArr.current, setidxI, setidxJ, volume);
     setisRunningShu(false);
   };
 
+  // Handle quickSort Button
   const handleSortTypeB = async () => {
     setisRunning(true);
     setisRunningShu(true);
-    await quickSort(refExtendedBarArr.current, 0, SIZE - 1, setidxI, setidxJ);
+    volume = allowedVolume;
+    await quickSort(
+      refExtendedBarArr.current,
+      0,
+      SIZE - 1,
+      setidxI,
+      setidxJ,
+      volume
+    );
     setisRunningShu(false);
   };
 
+  // Handle mergeSort Button
   const handleSortTypeC = async () => {
     setisRunning(true);
     setisRunningShu(true);
+    volume = allowedVolume;
     const defaultArr = [...arr];
-    setarr(await mergeSort(defaultArr, setarr, setidxI, setidxJ));
+    setarr(await mergeSort(defaultArr, setarr, setidxI, setidxJ, volume));
     setisRunningShu(false);
-
-    // await mergeSort(refExtendedBarArr.current, setidxI, setidxJ);
   };
 
+  // Handle heapSort Button
   const handleSortTypeD = async () => {
     setisRunning(true);
     setisRunningShu(true);
+    volume = allowedVolume;
+    await heapSort(refExtendedBarArr.current, SIZE, setidxI, setidxJ, volume);
+    setisRunningShu(false);
+  };
 
-    await heapSort(refExtendedBarArr.current, SIZE, setidxI, setidxJ);
+  // Handle shellSort Button
+  const handleSortTypeE = async () => {
+    setisRunning(true);
+    setisRunningShu(true);
+    volume = allowedVolume;
+    const defaultArr = [...arr];
+    await shellSort(defaultArr, setidxI, setidxJ, setarr, volume);
+    setarr(defaultArr);
+
+    setisRunningShu(false);
+  };
+
+  // Handle bubleSort Button
+  const handleSortTypeF = async () => {
+    setisRunning(true);
+    setisRunningShu(true);
+    volume = allowedVolume;
+    await bubleSort(refExtendedBarArr.current, setidxI, setidxJ, volume);
+    setisRunningShu(false);
+  };
+
+  // Handle selectionSort Button
+  const handleSortTypeG = async () => {
+    setisRunning(true);
+    setisRunningShu(true);
+    volume = allowedVolume;
+    await selectionSort(refExtendedBarArr.current, setidxI, setidxJ, volume);
     setisRunningShu(false);
   };
 
@@ -237,6 +288,7 @@ export default () => {
     <div className="container">
       <SpeedSwitch />
 
+      <VolSwitch />
       <Button
         variant="contained"
         color="default"
@@ -247,6 +299,7 @@ export default () => {
       >
         Insertion Sort
       </Button>
+
       <Button
         variant="contained"
         color="default"
@@ -277,6 +330,39 @@ export default () => {
       >
         Heap Sort
       </Button>
+      <Button
+        variant="contained"
+        color="default"
+        disabled={isRunning}
+        className={classes.buttonSort}
+        onClick={handleSortTypeE}
+        startIcon={<IconSort />}
+      >
+        Shell Sort
+      </Button>
+
+      <Button
+        variant="contained"
+        color="default"
+        disabled={isRunning}
+        className={classes.buttonSort}
+        onClick={handleSortTypeF}
+        startIcon={<IconSort />}
+      >
+        Bubble Sort
+      </Button>
+
+      <Button
+        variant="contained"
+        color="default"
+        disabled={isRunning}
+        className={classes.buttonSort}
+        onClick={handleSortTypeG}
+        startIcon={<IconSort />}
+      >
+        Selection Sort
+      </Button>
+
       {<MemorizedBoard arr={arr} refExtendedBarArr={refExtendedBarArr} />}
 
       <div className="indexBox">
@@ -284,20 +370,21 @@ export default () => {
           className="index i"
           style={{ transform: `translateX(${getX(idxI)}px)` }}
         >
-          &nbsp; i
+          <AudiotrackIcon />
+          {/* &nbsp; i */}
         </div>
         <div
           className="index j"
           style={{ transform: `translateX(${getX(idxJ)}px)` }}
         >
-          &nbsp; j
+          <AudiotrackIcon />
         </div>
       </div>
       <div className="buttonBox">
         {
           <Button
             variant="contained"
-            color="secondary"
+            color="inherit"
             disabled={isRunningShu}
             className={classes.buttonSort}
             startIcon={<IconShuffle />}
@@ -341,10 +428,12 @@ export default () => {
             opacity: 0.8;
           }
           .index.i {
-            background-color: red;
+            background-color: rgba(255, 0, 0, 0.6);
+            border-radius: 25px;
           }
           .index.j {
-            background-color: blue;
+            background-color: rgb(100, 149, 237);
+            border-radius: 25px;
           }
           .running {
             font-size: 40px;

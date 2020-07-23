@@ -1,6 +1,3 @@
-import React from "react";
-// For smoother visual
-import { tween } from "tweening-js";
 // Beep Sound
 import Beep from "browser-beep";
 import {
@@ -16,7 +13,8 @@ export const partition = async (
   left: number,
   right: number,
   setidxI: Tsetidx,
-  setidxJ: Tsetidx
+  setidxJ: Tsetidx,
+  allowedVolume: boolean
 ) => {
   // Pivot
   let x = extendedBarArr[right];
@@ -30,7 +28,10 @@ export const partition = async (
     if (extendedBarArr[j].value <= x.value) {
       i++;
       await delaySet(i, i + 1, setidxI);
-      //beepA(1);
+      console.log(allowedVolume);
+      if (allowedVolume) {
+        beepA(1);
+      }
       await Promise.all([
         delaySet(getX(i), getX(j), extendedBarArr[i].refsetX.current),
         delaySet(getX(j), getX(i), extendedBarArr[j].refsetX.current),
@@ -38,7 +39,9 @@ export const partition = async (
       swap(extendedBarArr, i, j);
     }
     j++;
-    //beepB(1);
+    if (allowedVolume) {
+      beepB(1);
+    }
     await delaySet(j, j + 1, setidxJ);
   }
   await Promise.all([
@@ -54,12 +57,20 @@ export const quickSort = async (
   left: number,
   right: number,
   setidxI: Tsetidx,
-  setidxJ: Tsetidx
+  setidxJ: Tsetidx,
+  allowedVolume: boolean
 ) => {
   if (left < right) {
     /* Partitioning index */
-    const p = await partition(extendedBarArr, left, right, setidxI, setidxJ);
-    quickSort(extendedBarArr, left, p - 1, setidxI, setidxJ);
-    quickSort(extendedBarArr, p + 1, right, setidxI, setidxJ);
+    const p = await partition(
+      extendedBarArr,
+      left,
+      right,
+      setidxI,
+      setidxJ,
+      allowedVolume
+    );
+    quickSort(extendedBarArr, left, p - 1, setidxI, setidxJ, allowedVolume);
+    quickSort(extendedBarArr, p + 1, right, setidxI, setidxJ, allowedVolume);
   }
 };

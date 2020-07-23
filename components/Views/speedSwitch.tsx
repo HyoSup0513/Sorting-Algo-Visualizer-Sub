@@ -47,7 +47,7 @@ export default () => {
     setChecked((prev) => !prev);
 
     if (checked == false) {
-      DURATION = 5;
+      DURATION = 10;
     } else {
       DURATION = 100;
     }
@@ -69,51 +69,6 @@ export default () => {
           </Grid>
         </Typography>
       </FormGroup>
-
-      <style jsx>
-        {`
-          .container {
-            padding: 32px;
-          }
-          .buttonBox {
-            width: 100%;
-            height: 60px;
-            background-color: pink;
-            text-align: right;
-          }
-          .button {
-            font-size: 40px;
-          }
-          .h3 {
-            font-size: 24px;
-            font-family: "Roboto", "Helvetica", "Arial", sans-serif;
-            margin: 0px;
-            color: white;
-            margin: 10px 0px;
-          }
-          .indexBox {
-            color: white;
-            padding: 0px 10px 0px 10px;
-            box-sizing: border-box;
-          }
-          .index {
-            position: absolute;
-            width: 20px;
-            background-color: yellow;
-            color: white;
-            opacity: 0.8;
-          }
-          .index.i {
-            background-color: red;
-          }
-          .index.j {
-            background-color: blue;
-          }
-          .running {
-            font-size: 40px;
-          }
-        `}
-      </style>
     </div>
   );
 };
