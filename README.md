@@ -1,10 +1,23 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Sorting Algorithm Visualizer
 
-## Getting Started
+This is a sorting algorithm visualization project using Next.js, Typescript, and React.
 
-First, run the development server:
+This project is deployed on Vercel and can be accessed here: [Sort-Visualizer](https://sorting-algo-visualizer-sub-6uvhnrfba.vercel.app/)
 
-```bash
+---
+
+## Features
+
+1. Basic sorting algorihms such as insertion sort, bubble sort, selection sort, mergesort sort, quick sort, heap sort, shell sort.
+2. Sound button: turn on or turn off.
+3. Shuffle button: Shuffle the original array.
+4. Speed button: slow or fast.
+
+---
+
+## How to use
+
+```
 npm run dev
 # or
 yarn dev
@@ -12,9 +25,11 @@ yarn dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+---
 
 ## Learn More
+
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 To learn more about Next.js, take a look at the following resources:
 
@@ -22,9 +37,3 @@ To learn more about Next.js, take a look at the following resources:
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/import?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

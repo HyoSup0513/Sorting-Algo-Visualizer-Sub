@@ -10,7 +10,7 @@
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/icons": "^4.9.1",
-    "@types/lodash": "^4.14.157",
+    "@types/lodash": "^4.14.158",
     "browser-beep": "^1.0.2",
     "colormap": "^2.3.1",
     "lodash": "^4.17.19",
@@ -21,7 +21,7 @@
     "typescript": "^3.9.7"
   },
   "devDependencies": {
-    "@types/node": "^14.0.23",
+    "@types/node": "^14.0.25",
     "@types/react": "^16.9.43"
   }
 }
