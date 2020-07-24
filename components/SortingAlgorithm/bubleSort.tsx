@@ -23,6 +23,7 @@ export const bubleSort = async (
     if (allowedVolume) {
       beepA(1);
     }
+
     for (let j = 0; j < len; j++) {
       if (extendedBarArr[j].value > extendedBarArr[j + 1].value) {
         if (allowedVolume) {

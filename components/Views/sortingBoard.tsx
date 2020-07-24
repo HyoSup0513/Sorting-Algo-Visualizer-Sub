@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme: Theme) =>
   })
 );
 
-let volume;
+let volume: boolean;
 export let SIZE = 70;
 const BAR_WIDTH = 20;
 const BAR_MARGIN = 2;
@@ -57,7 +57,7 @@ export type Tsetidx = Dispatch<SetStateAction<number>>;
 export type Tsetany = Dispatch<SetStateAction<any>>;
 export type TsetX = Dispatch<SetStateAction<number>>;
 
-export const getArr = () => shuffle(range(1, SIZE + 1));
+export const getArr = () => range(1, SIZE + 1);
 export const getX = (idx: number) => idx * (BAR_MARGIN + BAR_WIDTH);
 // const initArr = range(1, SIZE + 1).map(() => 1);
 
