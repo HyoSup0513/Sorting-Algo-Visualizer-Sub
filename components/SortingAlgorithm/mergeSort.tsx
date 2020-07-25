@@ -1,4 +1,11 @@
-import { Tsetidx, delay, delaySet } from "../Views/sortingBoard";
+import {
+  Tsetidx,
+  delay,
+  delaySet,
+  swap,
+  IExtendedBar,
+  getX,
+} from "../Views/sortingBoard";
 import { SetStateAction } from "react";
 // Beep Sound
 import Beep from "browser-beep";

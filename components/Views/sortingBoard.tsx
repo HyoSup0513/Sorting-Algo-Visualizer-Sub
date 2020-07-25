@@ -51,6 +51,7 @@ const useStyles = makeStyles((theme: Theme) =>
 
 let volume: boolean;
 export let SIZE = 70;
+const initArr = range(1, SIZE + 1).map(() => 1);
 const BAR_WIDTH = 20;
 const BAR_MARGIN = 2;
 export type Tsetidx = Dispatch<SetStateAction<number>>;
@@ -60,6 +61,13 @@ export type TsetX = Dispatch<SetStateAction<number>>;
 export const getArr = () => range(1, SIZE + 1);
 export const getX = (idx: number) => idx * (BAR_MARGIN + BAR_WIDTH);
 // const initArr = range(1, SIZE + 1).map(() => 1);
+
+const generateSize = (arr: number[]) => {
+  let emptyarr = [];
+  arr = emptyarr;
+
+  return arr;
+};
 
 export interface IExtendedBar {
   value: number;
@@ -192,15 +200,17 @@ const Board: FC<IpropsBoard> = (props) => {
 const MemorizedBoard = memo(Board, isArrEqual);
 
 export default () => {
-  const [arr, setarr] = useState(getArr());
+  const [arr, setarr] = useState(initArr);
   const [idxI, setidxI] = useState(1);
   const [idxJ, setidxJ] = useState(1);
   const [isRunning, setisRunning] = useState(false);
   const [isRunningShu, setisRunningShu] = useState(false);
   const refExtendedBarArr = useRef<IExtendedBar[]>([]);
+  useEffect(() => setarr(getArr()), []);
 
   // Handle Shuffle Button
   const handleShuffle = () => {
+    count = 0;
     setarr(shuffle(getArr()));
     setidxI(1);
     setidxJ(1);
@@ -240,6 +250,7 @@ export default () => {
     volume = allowedVolume;
     const defaultArr = [...arr];
     setarr(await mergeSort(defaultArr, setarr, setidxI, setidxJ, volume));
+
     setisRunningShu(false);
   };
 
