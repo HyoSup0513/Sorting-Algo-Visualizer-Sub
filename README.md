@@ -2,7 +2,7 @@
 
 This is a sorting algorithm visualization project using Next.js, Typescript, and React.
 
-This project is deployed on Vercel and can be accessed here: [Sort-Visualizer](https://sorting-algo-visualizer-sub-6uvhnrfba.vercel.app/)
+This project is deployed on Vercel and can be accessed here: [Sort-Visualizer](https://sortingvisualizer-three.vercel.app/)
 
 ---
 
